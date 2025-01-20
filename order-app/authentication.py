@@ -16,7 +16,7 @@ session = Session(bind = engine)
 @singn_router.post('/login')
 async def login(request:OAuth2PasswordRequestForm = Depends()):
 
-    user=session.query(User).filter(User.email==request.username).first()
+    user=session.query(User).filter(User.username==request.username).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Invalid Credential')
     if not check_password_hash(user.password,request.password):

@@ -1,10 +1,10 @@
-from pydantic import BaseModel,validator  
+from pydantic import BaseModel, EmailStr
 from typing import List,Optional
 
 
 class SignUpModel(BaseModel):
     username: str
-    email: str
+    email: EmailStr
     password: str
 
     class Config:
@@ -18,12 +18,13 @@ class SignUpModel(BaseModel):
         }
 
 class LoginUser(BaseModel):
-    username: str
+    email: str
     password: str
 
 class OrderModel(BaseModel):
     quantity:int
     pizza_size:Optional[str]="SMALL"
+    address : str
 
 
 
@@ -42,7 +43,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username:  str
+    email:  str
 
 
 class OrderStatusModel(BaseModel):

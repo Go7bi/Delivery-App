@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy import Column,Integer,Boolean,Text,String,ForeignKey
+from sqlalchemy import Column,Integer,Boolean,Text,String,ForeignKey,Float
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils.types import ChoiceType
 
@@ -40,6 +40,8 @@ class Order(Base):
     order_status=Column(ChoiceType(choices=ORDER_STATUSES),default="PENDING")
     pizza_size=Column(ChoiceType(choices=PIZZA_SIZES),default="SMALL")
     user_id=Column(Integer,ForeignKey('user.id'))
+    address = Column(String) 
+    total = Column(Float)
     user=relationship('User',back_populates='orders')
 
     def __repr__(self):

@@ -23,7 +23,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     print(f"Decoded token data: {token_data}")
 
     
-    user = session.query(User).filter(User.username == token_data.username).first()
+    user = session.query(User).filter(User.email == token_data.email).first()
 
     if user is None:
         raise credentials_exception  

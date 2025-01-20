@@ -13,15 +13,21 @@ order_router = APIRouter(
 session = Session(bind=engine)
 
 @order_router.post('/order', status_code=status.HTTP_201_CREATED)
-async def place_an_order(order: OrderModel,current_user: str = Depends(get_current_user)):
+async def place_an_order(order: OrderModel, current_user: str = Depends(get_current_user)):
+    if order.quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Quantity must be a positive number greater than 0"
+        )
 
+    # Other order processing logic...
+    
     new_order = Order(
         pizza_size=order.pizza_size,
         quantity=order.quantity,
-
+        user_id=current_user.id
     )
     session.add(new_order)
-
     session.commit()
 
     response = {
@@ -31,7 +37,7 @@ async def place_an_order(order: OrderModel,current_user: str = Depends(get_curre
         "order_status": new_order.order_status
     }
 
-    return jsonable_encoder(response)
+    return response
 
 
 @order_router.get('/showall')
@@ -110,21 +116,14 @@ async def patch_order(id:int,request:OrderStatusModel,current_user: str = Depend
     return order
 
 
-@order_router.get("/orders")
-async def get_orders_for_current_user(
-    current_user: User = Depends(get_current_user)  # Get the current user directly
-):
-    # Access the user's orders directly via the 'orders' relationship
-    order_det = current_user.orders
-    
-    if not order_det:
-        raise HTTPException(status_code=404, detail="No orders found for the current user")
-    
-    # Return the orders as a list of OrderModel
-    return [
-        OrderModel(
-            quantity=order.quantity,
-            order_status=order.order_status,
-            pizza_size=order.pizza_size
-        ) for order in order_det
-    ]
+# @order_router.get("/orders")
+# async def get_orders(current_user: str = Depends(get_current_user)):
+#     orders = session.query(Order).filter(Order.user_email == current_user).all()  
+
+#     if not orders:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="No orders found for the current user"
+#         )
+
+#     return orders

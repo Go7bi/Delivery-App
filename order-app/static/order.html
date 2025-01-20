@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .pizza-size-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .pizza-size-btn.selected {
+            background-color: #7fc3db;
+            color: white;
+        }
+        .pizza-size-btn img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Place Your Order</h1>
+        
+        <!-- Pizza Size and Quantity Selection -->
+        <div>
+            <h2>Select Pizza Size</h2>
+            <div id="pizzaSizes">
+                <div class="pizza-size-btn" id="small" onclick="selectPizzaSize('SMALL')">
+                    <img src="images/small_pizza.jpeg" alt="Small Pizza">
+                    Small
+                </div>
+                <div class="pizza-size-btn" id="medium" onclick="selectPizzaSize('MEDIUM')">
+                    <img src="images/medium_pizza.jpeg" alt="Medium Pizza">
+                    Medium
+                </div>
+                <div class="pizza-size-btn" id="large" onclick="selectPizzaSize('LARGE')">
+                    <img src="images/large_pizza.jpeg" alt="Large Pizza">
+                    Large
+                </div>
+                <div class="pizza-size-btn" id="extra-large" onclick="selectPizzaSize('EXTRA-LARGE')">
+                    <img src="images/extra_large_pizza.jpeg" alt="Extra Large Pizza">
+                    Extra Large
+                </div>
+            </div>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" required>
+
+            <button type="submit" id="addToCartBtn">Add to Cart</button>
+        </div>
+
+        <!-- Display Selected Pizza Image -->
+        <h2>Selected Pizza Size</h2>
+        <img id="pizzaImage" src="images/small_pizza.jpg" alt="Pizza Image" style="max-width: 300px; width: 100%; height: auto; display: block; margin: 20px auto;">
+        
+        <!-- Cart Summary -->
+        <h2>Your Cart</h2>
+        <ul id="cartList"></ul> <!-- Cart items will be listed here -->
+        
+        <div>
+            <h3>Total Price: ₹<span id="totalPrice">0.00</span></h3>
+            <button id="checkoutBtn" onclick="placeOrder()" disabled>Proceed to Checkout</button>
+        </div>
+
+        <!-- Shipping Address (Optional) -->
+        <div id="addressSection" style="display: none;">
+            <h2>Enter Shipping Address</h2>
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+            <button onclick="submitOrder()">Place Order</button>
+        </div>
+
+        <div id="orderSuccess" style="display: none;">
+            <h2>Order Placed Successfully!</h2>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const pizzaImages = {
+            "SMALL": "images/small_pizza.jpeg",
+            "MEDIUM": "images/medium_pizza.jpeg",
+            "LARGE": "images/large_pizza.jpeg",
+            "EXTRA-LARGE": "images/extra_large_pizza.jpeg"
+        };
+
+        const pizzaPrices = {
+            "SMALL": 200.99,
+            "MEDIUM": 250.99,
+            "LARGE": 350.99,
+            "EXTRA-LARGE": 500.99
+        };
+
+        let cart = [];
+        let selectedPizzaSize = null;
+
+        const pizzaSizeButtons = document.querySelectorAll('.pizza-size-btn');
+        const pizzaImage = document.getElementById('pizzaImage');
+        const cartList = document.getElementById('cartList');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const addressSection = document.getElementById('addressSection');
+        const orderSuccessSection = document.getElementById('orderSuccess');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+
+        function selectPizzaSize(size) {
+            pizzaSizeButtons.forEach(button => button.classList.remove('selected'));
+            const selectedButton = document.getElementById(size.toLowerCase());
+            selectedButton.classList.add('selected');
+            selectedPizzaSize = size;
+            pizzaImage.src = pizzaImages[size];
+        }
+
+        function updateCart() {
+            cartList.innerHTML = '';
+            let totalPrice = 0;
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.quantity} x ${item.pizza_size} pizza (₹${(pizzaPrices[item.pizza_size] * item.quantity).toFixed(2)})`;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.onclick = () => removeFromCart(index);
+                li.appendChild(removeBtn);
+
+                cartList.appendChild(li);
+                totalPrice += pizzaPrices[item.pizza_size] * item.quantity;
+            });
+
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+            checkoutBtn.disabled = cart.length === 0;
+        }
+
+        addToCartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (!selectedPizzaSize) {
+                alert('Please select a pizza size.');
+                return;
+            }
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            if (quantity <= 0) {
+                alert('Quantity must be greater than 0.');
+                return;
+            }
+
+            cart.push({ pizza_size: selectedPizzaSize, quantity });
+            updateCart();
+            document.getElementById('quantity').value = '';
+        });
+
+        function removeFromCart(index) {
+            cart.splice(index, 1); 
+            updateCart();
+        }
+
+        function placeOrder() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            addressSection.style.display = 'block';
+            checkoutBtn.disabled = true;
+        }
+
+        async function submitOrder() {
+            const address = document.getElementById('address').value.trim();
+
+            if (!address) {
+                alert('Please provide an address.');
+                return;
+            }
+
+            // Retrieve the token from localStorage (assuming it is stored there after user login)
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('You are not authenticated. Please log in.');
+                window.location.href = 'login.html';  // Redirect to login page
+                return;
+            }
+
+            const orderData = {
+                items: cart,
+                address: address,
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/orders/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,  
+                    },
+                    body: JSON.stringify(orderData),
+                });
+
+                const data = await response.json();
+
+                if (data.id) {
+                    addressSection.style.display = 'none';
+                    orderSuccessSection.style.display = 'block';
+                    cart = [];
+                    updateCart();
+                } else {
+                    alert(`Failed to place order: ${data.detail || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        function calculateTotal() {
+            return cart.reduce((total, item) => total + pizzaPrices[item.pizza_size] * item.quantity, 0);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

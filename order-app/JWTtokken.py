@@ -20,16 +20,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 def verify_tokken(token: str, credentials_exception: HTTPException):
     try:
-        # Decode the token without verifying the signature
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         
-        # Get the 'sub' claim from the token (typically username or user identifier)
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception  # If no 'sub' (username) exists, raise an exception
-
-        # Return TokenData with the username
-        return schemas.TokenData(username=username)
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        return schemas.TokenData(email=email)
 
     except JWTError as e:
         raise credentials_exception
