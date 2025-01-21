@@ -5,8 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            font-size: 1.5em;
+            padding-left: 20px;
+        }
+
+        .header-right {
+            font-size: 1.1em;
+            padding-right: 20px;
+        }
+
+        .header-right a {
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-right a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="register.html">OnlyVeg</a> <!-- Logo Link -->
+            </div>
+            <div class="header-right">
+                <span id="userName"></span>
+                <a href="register.html" id="registerLink">Register</a>
+                <a href="login.html" id="loginLink">Login</a>
+                <a href="javascript:void(0);" id="logoutLink" onclick="logout()" style="display:none;">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Form Section -->
     <div class="container">
         <h1>Login</h1>
         <form id="loginForm">
@@ -18,10 +99,18 @@
 
             <button type="submit">Login</button>
         </form>
-        <p>Don't have an account? <a href="index.html">Sign up here</a></p>
+        <p>Don't have an account? <a href="register.html">Sign up here</a></p>
     </div>
 
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 PizzaShop. All rights reserved.</p>
+    </footer>
+
     <script>
+       
+        updateUserInfo();
+
         const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -49,6 +138,31 @@
                 alert(result.detail || 'Invalid credentials');
             }
         });
+
+        function updateUserInfo() {
+            const userName = document.getElementById('userName');
+            const token = localStorage.getItem('token');
+
+            if (token) {
+                
+                userName.textContent = "Hello, User!";
+                document.getElementById('loginLink').style.display = 'none';
+                document.getElementById('registerLink').style.display = 'none';
+                document.getElementById('logoutLink').style.display = 'inline';
+            } else {
+                
+                userName.textContent = '';
+                document.getElementById('loginLink').style.display = 'inline';
+                document.getElementById('registerLink').style.display = 'inline';
+                document.getElementById('logoutLink').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            
+            localStorage.removeItem('token');
+            updateUserInfo(); 
+        }
     </script>
     
 </body>

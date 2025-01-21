@@ -16,9 +16,9 @@ session = Session(bind=engine)
 
 @order_router.post('/order', status_code=status.HTTP_201_CREATED)
 async def place_an_order(order: OrderRequest, current_user: str = Depends(get_current_user)):
-    total_price = 0  # Initialize total price
+    total_price = 0  
 
-    # Process each item in the order
+  
     for item in order.items:
         if item.quantity <= 0:
             raise HTTPException(

@@ -4,146 +4,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter Address</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Modern font -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* General styling */
-.container {
-    width: 80%;
-    margin: 0 auto;
-    }
+      
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+    
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+    
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+    
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px; 
+        }
+    
+        .header-left {
+            font-size: 1.5em;
+            padding-left: 20px;
+        }
+    
+        .header-right {
+            font-size: 1.1em;
+            padding-right: 20px;
+        }
+    
+        .header-right a {
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+        }
+    
+        .header-right a:hover {
+            text-decoration: underline;
+        }
+    
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    
+        footer p {
+            margin: 0;
+        }
+        .user-info a {
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-    header {
-        background-color: #333;
-        color: white;
-        padding: 10px 0;
-        margin-bottom: 20px;
-    }
+        .user-info a:hover {
+            text-decoration: underline;
+        }
 
-    header .header-left {
-        float: left;
-        font-size: 1.5em;
-    }
+        .logo {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: white;
+        }
 
-    header .header-right {
-        float: right;
-        font-size: 1.1em;
-    }
+       
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-    header .header-right a {
-        margin-left: 15px;
-        color: white;
-        text-decoration: none;
-    }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    header .header-right a:hover {
-        text-decoration: underline;
-    }
+        
+        .address-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    footer {
-        background-color: #333;
-        color: white;
-        padding: 10px 0;
-        text-align: center;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-    }
+        label {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 8px;
+        }
 
-    footer p {
-        margin: 0;
-    }
+        textarea {
+            width: 100%;
+            padding: 14px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: border 0.3s ease;
+        }
 
-</style>
+        textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            padding: 14px;
+            font-size: 1.1em;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        
+        #orderSuccess {
+            text-align: center;
+            padding: 20px;
+            color: rgb(11, 11, 11);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        #orderSuccess button {
+            background-color: #e02e2e;
+            margin-top: 15px;
+        }
+
+        
+        #loginPopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .popup-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+        .popup-content button {
+            background-color: #4CAF50;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.1em;
+        }
+
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            textarea {
+                font-size: 0.95em;
+            }
+
+            button {
+                font-size: 1em;
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <a href="add_to_cart.html">OnlyVeg</a>
-            </div>
-            <div class="user-info">
-                <span id="userName"></span>
-                <a href="index.html" id="registerLink">Register</a>
-                <a href="login.html" id="loginLink">Login</a>
-                <a href="add_to_cart.html" id="logoutLink" style="display:none;">Logout</a>
-            </div>
-        </div>
-    </header>
-    <div class="container">
-        <h1>Enter Shipping Address</h1>
 
-        <!-- Shipping Address -->
-        <div>
-            <label for="address">Address:</label>
-            <textarea id="address" name="address" rows="3" required></textarea>
-            <button onclick="submitOrder()">Place Order</button>
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="add_to_cart.html">OnlyVeg</a>
         </div>
-
-        <div id="orderSuccess" style="display: none;">
-            <h2>Order Placed Successfully!</h2>
-            <button onclick="logout()">Logout</button>
+        <div class="user-info header-right">
+            <span id="userName"></span>
+            <a href="register.html" id="registerLink">Register</a>
+            <a href="login.html" id="loginLink">Login</a>
+            <a href="add_to_cart.html" id="logoutLink" style="display:none;" onclick="logout()">Logout</a>
         </div>
     </div>
+</header>
 
-    <footer>
-        <div class="footer-container">
-            <p>&copy; 2025 PizzaShop. All rights reserved.</p>
-        </div>
-    </footer>
+<div class="container">
+    <h1>Enter Shipping Address</h1>
 
-    <script src="auth.js"></script>
+    <div class="address-form">
+        <label for="address">Address:</label>
+        <textarea id="address" name="address" rows="5" required placeholder="Enter your full address here..."></textarea>
+        <button onclick="submitOrder()">Place Order</button>
+    </div>
 
-    <script>
-        async function submitOrder() {
-            const address = document.getElementById('address').value.trim();
+    <div id="orderSuccess" style="display: none;">
+        <h2>Order Placed Successfully!</h2>
+        
+    </div>
+</div>
 
-            if (!address) {
-                alert('Please provide an address.');
-                return;
-            }
+<footer>
+    <p>&copy; 2025 PizzaShop. All rights reserved.</p>
+</footer>
 
-            const cart = JSON.parse(localStorage.getItem('cart')); // Retrieve cart data from localStorage
-            const totalPrice = cart.reduce((total, item) => {
-                const price = item.pizza_size === "SMALL" ? 200.99 :
-                              item.pizza_size === "MEDIUM" ? 250.99 :
-                              item.pizza_size === "LARGE" ? 350.99 : 500.99;
-                return total + (price * item.quantity);
-            }, 0);
+<!-- Popup Modal -->
+<div id="loginPopup">
+    <div class="popup-content">
+        <h2>Login Required</h2>
+        <p>You need to be logged in to place an order.</p>
+        <button onclick="window.location.href='login.html'">Login Now</button>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
 
-            const orderData = {
-                items: cart,
-                address: address,
-                total: totalPrice,
-            };
+<script src="auth.js"></script>
 
-            try {
-                const response = await fetch('http://127.0.0.1:8000/orders/order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                    body: JSON.stringify(orderData),
-                });
+<script>
+    
+    window.onload = function() {
+        updateUserInfo();
+    };
 
-                const data = await response.json();
+    function updateUserInfo() {
+        const userName = document.getElementById('userName');
+        const token = localStorage.getItem('token');
 
-                if (data.order_id) {
-                    document.getElementById('orderSuccess').style.display = 'block';
-                    localStorage.removeItem('cart'); // Clear the cart after successful order
-                } else {
-                    alert(`Failed to place order: ${data.detail || 'Unknown error'}`);
-                }
-            } catch (error) {
-                console.error('Error placing order:', error);
-                alert('Something went wrong. Please try again.');
-            }
+        if (token) {
+           
+            userName.textContent = "Hello, Welcome Back!";
+            document.getElementById('loginLink').style.display = 'none';
+            document.getElementById('registerLink').style.display = 'none';
+            document.getElementById('logoutLink').style.display = 'inline';
+        } else {
+           
+            userName.textContent = '';
+            document.getElementById('loginLink').style.display = 'inline';
+            document.getElementById('registerLink').style.display = 'inline';
+            document.getElementById('logoutLink').style.display = 'none';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+
+    async function submitOrder() {
+        const address = document.getElementById('address').value.trim();
+
+        if (!address) {
+            alert('Please provide an address.');
+            return;
         }
 
-        function logout() {
-            localStorage.removeItem('token');
-            window.location.href = 'login.html';
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showLoginPopup();
+            return;
         }
-    </script>
+
+        const cart = JSON.parse(localStorage.getItem('cart'));  
+        const totalPrice = cart.reduce((total, item) => {
+            const price = item.pizza_size === "SMALL" ? 200.99 :
+                          item.pizza_size === "MEDIUM" ? 250.99 :
+                          item.pizza_size === "LARGE" ? 350.99 : 500.99;
+            return total + (price * item.quantity);
+        }, 0);
+
+        const orderData = {
+            items: cart,
+            address: address,
+            total: totalPrice,
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/orders/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(orderData),
+            });
+
+            const data = await response.json();
+
+            if (data.order_id) {
+                document.getElementById('orderSuccess').style.display = 'block';
+                localStorage.removeItem('cart'); 
+            } else {
+                alert(`Failed to place order: ${data.detail || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+            alert('Something went wrong. Please try again.');
+        }
+    }
+
+    function showLoginPopup() {
+        document.getElementById('loginPopup').style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('loginPopup').style.display = 'none';
+    }
+</script>
+
 </body>
 </html>
