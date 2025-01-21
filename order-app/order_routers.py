@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from .models import User, Order
-from .schemas import OrderModel, LoginUser,SignUpModel,OrderStatusModel
+from .schemas import OrderModel, LoginUser,SignUpModel,OrderStatusModel,OrderRequest
 from .database import Session, engine
 from .oauth import get_current_user
 from fastapi.encoders import jsonable_encoder
@@ -12,32 +12,52 @@ order_router = APIRouter(
 
 session = Session(bind=engine)
 
+
+
 @order_router.post('/order', status_code=status.HTTP_201_CREATED)
-async def place_an_order(order: OrderModel, current_user: str = Depends(get_current_user)):
-    if order.quantity <= 0:
+async def place_an_order(order: OrderRequest, current_user: str = Depends(get_current_user)):
+    total_price = 0  # Initialize total price
+
+    # Process each item in the order
+    for item in order.items:
+        if item.quantity <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Quantity must be a positive number greater than 0"
+            )
+        
+     
+        pizza_prices = {
+            "SMALL": 200.99,
+            "MEDIUM": 250.99,
+            "LARGE": 350.99,
+            "EXTRA-LARGE": 500.99,
+        }
+        
+        pizza_price = pizza_prices.get(item.pizza_size, 200.99)  
+        item_total = pizza_price * item.quantity
+        total_price += item_total
+
+        
+        new_order = Order(
+            pizza_size=item.pizza_size,
+            quantity=item.quantity,
+            address=order.address,
+            total=item_total,  
+            user_id=current_user.id
+        )
+        session.add(new_order)
+        session.commit()
+
+    
+    if total_price != order.total:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Quantity must be a positive number greater than 0"
+            detail="Calculated total price does not match the provided total."
         )
 
-    # Other order processing logic...
-    
-    new_order = Order(
-        pizza_size=order.pizza_size,
-        quantity=order.quantity,
-        user_id=current_user.id
-    )
-    session.add(new_order)
-    session.commit()
+    return {"message": "Order placed successfully", "order_id": new_order.id}
 
-    response = {
-        "pizza_size": new_order.pizza_size,
-        "quantity": new_order.quantity,
-        "id": new_order.id,
-        "order_status": new_order.order_status
-    }
-
-    return response
 
 
 @order_router.get('/showall')

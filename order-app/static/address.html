@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Address</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General styling */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    }
+
+    header {
+        background-color: #333;
+        color: white;
+        padding: 10px 0;
+        margin-bottom: 20px;
+    }
+
+    header .header-left {
+        float: left;
+        font-size: 1.5em;
+    }
+
+    header .header-right {
+        float: right;
+        font-size: 1.1em;
+    }
+
+    header .header-right a {
+        margin-left: 15px;
+        color: white;
+        text-decoration: none;
+    }
+
+    header .header-right a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        background-color: #333;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+
+    footer p {
+        margin: 0;
+    }
+
+</style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="add_to_cart.html">OnlyVeg</a>
+            </div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <a href="index.html" id="registerLink">Register</a>
+                <a href="login.html" id="loginLink">Login</a>
+                <a href="add_to_cart.html" id="logoutLink" style="display:none;">Logout</a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Enter Shipping Address</h1>
+
+        <!-- Shipping Address -->
+        <div>
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+            <button onclick="submitOrder()">Place Order</button>
+        </div>
+
+        <div id="orderSuccess" style="display: none;">
+            <h2>Order Placed Successfully!</h2>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2025 PizzaShop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+
+    <script>
+        async function submitOrder() {
+            const address = document.getElementById('address').value.trim();
+
+            if (!address) {
+                alert('Please provide an address.');
+                return;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('cart')); // Retrieve cart data from localStorage
+            const totalPrice = cart.reduce((total, item) => {
+                const price = item.pizza_size === "SMALL" ? 200.99 :
+                              item.pizza_size === "MEDIUM" ? 250.99 :
+                              item.pizza_size === "LARGE" ? 350.99 : 500.99;
+                return total + (price * item.quantity);
+            }, 0);
+
+            const orderData = {
+                items: cart,
+                address: address,
+                total: totalPrice,
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/orders/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                    body: JSON.stringify(orderData),
+                });
+
+                const data = await response.json();
+
+                if (data.order_id) {
+                    document.getElementById('orderSuccess').style.display = 'block';
+                    localStorage.removeItem('cart'); // Clear the cart after successful order
+                } else {
+                    alert(`Failed to place order: ${data.detail || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

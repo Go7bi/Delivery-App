@@ -22,20 +22,26 @@ class LoginUser(BaseModel):
     password: str
 
 class OrderModel(BaseModel):
-    quantity:int
-    pizza_size:Optional[str]="SMALL"
-    address : str
-
-
+    quantity: int
+    pizza_size: Optional[str] = "SMALL"
 
     class Config:
-        orm_mode=True
-        schema_extra={
-            "example":{
-                "quantity":2,
-                "pizza_size":"LARGE"
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "quantity": 2,
+                "pizza_size": "LARGE",
+                
             }
         }
+
+
+class OrderRequest(BaseModel):
+    items: List[OrderModel]  
+    address: str
+    total: float
+
+
 
 class Token(BaseModel):
     access_token: str
